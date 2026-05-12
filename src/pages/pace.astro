@@ -1,0 +1,14 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Calculator from "../components/Calculator";
+import { getRunningData } from "../lib/data/getRunningData";
+
+const { paceData, vdotData } = await getRunningData();
+
+---
+
+<Layout title="Pace">
+    <h1 class="text-4xl font-bold">Pace Page</h1>
+    <p class="mt-4 text-lg">This is the pace page of your Astro project.</p>
+    <Calculator client:load paceData={paceData} vdotData={vdotData} />
+</Layout>
