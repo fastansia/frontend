@@ -36,15 +36,14 @@ export default function ({ paceData, vdotData }: Props) {
     const [distanceLabels, setDistanceLabels] = useState<Record<string, number>>({});
     const paceKm = useMemo(() => {
         const pace = calculatePace(hours, minutes, seconds, distance, 1000);
-        return `${pace} / km`;
+        return pace ? `${pace} / km` : null;
     }, [hours, minutes, seconds, distance]);
     const paceMile = useMemo(() => {
         const pace = calculatePace(hours, minutes, seconds, distance, 1609.344);
-        return `${pace} / mi`;
+        return pace ? `${pace} / mi` : null;
     }, [hours, minutes, seconds, distance]);
 
     const [vdotLevels, setVdotLevels] = useState<Record<string, any>>({});
-    const [vdotTierDefinitions, setVdotTierDefinitions] = useState<Record<string, any>>({});
     const vdot = useMemo(() => {
         if (distance === 0) {
             return 0;
@@ -65,13 +64,6 @@ export default function ({ paceData, vdotData }: Props) {
         }
         return "Unknown";
     }, [vdot, vdotLevels]);
-    const vdotDefinition = useMemo(() => {
-        console.log(vdotTier, vdotTierDefinitions);
-        if (!vdotTierDefinitions) {
-            return "";
-        }
-        return vdotTier in vdotTierDefinitions ? vdotTierDefinitions[vdotTier] : "";
-    }, [vdotTier, vdotTierDefinitions]);
 
     useEffect(() => {
         if (paceData) {
@@ -81,50 +73,58 @@ export default function ({ paceData, vdotData }: Props) {
         }
         if (vdotData) {
             setVdotLevels(vdotData.data);
-            setVdotTierDefinitions(vdotData.metadata.tier_definitions);
         }
     }, [paceData, vdotData]);
 
     return (
         <>
-            <form>
-                <select value={distance} onChange={(e) => setDistance(Number(e.target.value))}>
+            <form className="grid gap-4 bangers-regular">
+                <select
+                    className="w-full border-b border-gray-700"
+                    value={distance}
+                    onChange={(e) => setDistance(Number(e.target.value))}
+                >
                     {Object.keys(distanceLabels).map((distance) => (
                         <option key={distance} value={distance}>{distanceLabels[distance]}</option>
                     ))}
                 </select>
-                <div>
-                    <label htmlFor="hours">Hours</label>
-                    <input
-                        type="text"
-                        id="hours"
-                        value={hours}
-                        onChange={(e) => setHours(Number(e.target.value))}
-                    />
-                </div>
-                <div>
-                    <label htmlFor="minutes">Minutes</label>
-                    <input
-                        type="text"
-                        id="minutes"
-                        value={minutes}
-                        onChange={(e) => setMinutes(Number(e.target.value))}
-                    />
-                </div>
-                <div>
-                    <label htmlFor="seconds">Seconds</label>
-                    <input
-                        type="text"
-                        id="seconds"
-                        value={seconds}
-                        onChange={(e) => setSeconds(Number(e.target.value))}
-                    />
+                <div className="grid grid-cols-3 gap-4 time-input-div">
+                    <div className="flex flex-col gap-1">
+                        <label htmlFor="hours">Hours</label>
+                        <input
+                            type="text"
+                            id="hours"
+                            className="border-b border-gray-700"
+                            value={hours}
+                            onChange={(e) => setHours(Number(e.target.value))}
+                        />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                        <label htmlFor="minutes">Minutes</label>
+                        <input
+                            type="text"
+                            id="minutes"
+                            className="border-b border-gray-700"
+                            value={minutes}
+                            onChange={(e) => setMinutes(Number(e.target.value))}
+                        />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                        <label htmlFor="seconds">Seconds</label>
+                        <input
+                            type="text"
+                            id="seconds"
+                            className="border-b border-gray-700"
+                            value={seconds}
+                            onChange={(e) => setSeconds(Number(e.target.value))}
+                        />
+                    </div>
                 </div>
             </form>
-            <p>Your pace is {paceKm}</p>
-            <p>Your pace is {paceMile}</p>
-            <p>Your VDOT is {vdot.toFixed(2)} with level {vdotTier}</p>
-            <p>{JSON.stringify(vdotDefinition)}</p>
+            {!paceKm && <p className="text-xl text-gray-500 bangers-regular">Enter time to calculate your pace and VDOT</p>}
+            {paceKm && <p className="text-xl bangers-regular">{paceKm}</p>}
+            {paceMile && <p className="text-xl bangers-regular">{paceMile}</p>}
+            {paceKm && <p className="text-xl bangers-regular">Your VDOT is {vdot.toFixed(1)} ({vdotTier})</p>}
         </>
     );
 }
