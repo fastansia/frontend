@@ -53,8 +53,10 @@ export default function ({ paceData, vdotData }: Props) {
             return null;
         }
 
-        const genderString = paceData.metadata.genders[gender];
-        const data = paceData.data[distance][genderString];
+        const data = paceData.data[distance][gender];
+        if (!data) {
+            return null;
+        }
         for (const [ageRange, ageRangeData] of Object.entries(data)) {
             const [minAge, maxAge] = ageRange.split("-").map(Number);
             if (age < minAge || age > maxAge) {
@@ -172,8 +174,8 @@ export default function ({ paceData, vdotData }: Props) {
                     }}
                 >
                     <option value="">Do not use</option>
-                    {Object.keys(paceData.metadata.genders).map((g) => (
-                        <option key={g} value={g}>{paceData.metadata.genders[g]}</option>
+                    {paceData.metadata.genders.map((g: string) => (
+                        <option key={g} value={g}>{g}</option>
                     ))}
                 </select>
             </div>
