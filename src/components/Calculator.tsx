@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type KeyboardEvent } from "react";
 
 function calculatePace(hours: number, minutes: number, seconds: number, distance: number, paceDistance: number) {
     const totalSeconds = hours * 3600 + minutes * 60 + seconds;
@@ -26,6 +26,31 @@ function calculatePace(hours: number, minutes: number, seconds: number, distance
 interface Props {
     paceData: any;
     vdotData: any;
+}
+
+function normalizeWholeNumber(value: string) {
+    if (value === "") {
+        return 0;
+    }
+    const parsed = Number.parseInt(value, 10);
+    if (Number.isNaN(parsed)) {
+        return 0;
+    }
+    return Math.max(0, parsed);
+}
+
+function handleLeadingZeroKeydown(
+    e: KeyboardEvent<HTMLInputElement>,
+    currentValue: number,
+    setValue: (value: number) => void,
+) {
+    if (currentValue !== 0 || e.ctrlKey || e.metaKey || e.altKey) {
+        return;
+    }
+    if (/^[0-9]$/.test(e.key)) {
+        e.preventDefault();
+        setValue(Number(e.key));
+    }
 }
 
 export default function ({ paceData, vdotData }: Props) {
@@ -129,31 +154,46 @@ export default function ({ paceData, vdotData }: Props) {
                     <div className="flex flex-col gap-1">
                         <label htmlFor="hours">Hours</label>
                         <input
-                            type="text"
+                            type="number"
                             id="hours"
                             className="border-b border-gray-700"
+                            inputMode="numeric"
+                            min={0}
+                            step={1}
                             value={hours}
-                            onChange={(e) => setHours(Number(e.target.value))}
+                            onFocus={(e) => e.target.select()}
+                            onKeyDown={(e) => handleLeadingZeroKeydown(e, hours, setHours)}
+                            onChange={(e) => setHours(normalizeWholeNumber(e.target.value))}
                         />
                     </div>
                     <div className="flex flex-col gap-1">
                         <label htmlFor="minutes">Minutes</label>
                         <input
-                            type="text"
+                            type="number"
                             id="minutes"
                             className="border-b border-gray-700"
+                            inputMode="numeric"
+                            min={0}
+                            step={1}
                             value={minutes}
-                            onChange={(e) => setMinutes(Number(e.target.value))}
+                            onFocus={(e) => e.target.select()}
+                            onKeyDown={(e) => handleLeadingZeroKeydown(e, minutes, setMinutes)}
+                            onChange={(e) => setMinutes(normalizeWholeNumber(e.target.value))}
                         />
                     </div>
                     <div className="flex flex-col gap-1">
                         <label htmlFor="seconds">Seconds</label>
                         <input
-                            type="text"
+                            type="number"
                             id="seconds"
                             className="border-b border-gray-700"
+                            inputMode="numeric"
+                            min={0}
+                            step={1}
                             value={seconds}
-                            onChange={(e) => setSeconds(Number(e.target.value))}
+                            onFocus={(e) => e.target.select()}
+                            onKeyDown={(e) => handleLeadingZeroKeydown(e, seconds, setSeconds)}
+                            onChange={(e) => setSeconds(normalizeWholeNumber(e.target.value))}
                         />
                     </div>
                 </div>
