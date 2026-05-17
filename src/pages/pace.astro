@@ -2,6 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import Calculator from "../components/Calculator";
 import PaceChart from "../components/PaceChart";
+import VdotChart from "../components/VdotChart";
 import { getRunningData } from "../lib/data/getRunningData";
 
 const { paceData, vdotData } = await getRunningData();
@@ -44,6 +45,10 @@ const { paceData, vdotData } = await getRunningData();
                 ),
             )
         }
+    </div>
+    <div class="separator"></div>
+    <div class="p-8 text-xl bangers-regular">
+        <VdotChart client:load data={vdotData} />
         {
             Object.entries(vdotData.metadata.tier_definitions).map(
                 ([tier, definitionObject]: [string, any]) => (
@@ -62,3 +67,12 @@ const { paceData, vdotData } = await getRunningData();
         }
     </div>
 </Layout>
+
+<style>
+    .separator {
+        height: 10px;
+        width: 100vw;
+        background-color: black;
+        margin: 20px 0;
+    }
+</style>
