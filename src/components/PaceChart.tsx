@@ -63,8 +63,7 @@ export default function ({ data }: any) {
             },
             legend: {
                 data: Object.keys(seriesMapping),
-                selectedMode: "multiple",
-                formatter: (name) => name.charAt(0).toUpperCase() + name.slice(1),
+                selectedMode: "multiple"
             },
             grid: {
                 left: '5%',
