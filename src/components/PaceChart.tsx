@@ -62,7 +62,7 @@ export default function ({ data }: any) {
                 text: "Finish Time Across Skill Levels",
             },
             legend: {
-                data: Object.keys(seriesMapping),
+                data: Object.keys(data.metadata.skill_level_definitions),
                 selectedMode: "multiple"
             },
             grid: {
